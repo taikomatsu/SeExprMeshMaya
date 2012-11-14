@@ -1,0 +1,75 @@
+global proc AEseExprMeshTemplate (string $nodeName) 
+{
+	editorTemplate -beginScrollLayout;
+	editorTemplate -addControl "enable";
+
+	editorTemplate -beginLayout "Expression" -collapse false;
+	editorTemplate -addControl "outType";
+	editorTemplate -callCustom
+		"AEseExprMeshNew" "AEseExprMeshReplace" "seExprStr";
+	editorTemplate -addControl "envelope";
+	editorTemplate -addControl "time";
+	editorTemplate -endLayout;
+
+	editorTemplate -beginLayout "inMatrix" -collapse true;
+	editorTemplate -addControl "inMatrix";
+	editorTemplate -endLayout;
+
+	editorTemplate -addExtraControls;
+
+	editorTemplate -beginLayout (uiRes("m_AEdependNodeTemplate.kNodeBehavior"));
+	editorTemplate -addControl "caching";
+	editorTemplate -addControl "nodeState";
+	editorTemplate -endLayout;
+
+	editorTemplate -endScrollLayout;
+
+	editorTemplate -suppress "seExprStr";
+	editorTemplate -suppress "inMesh";
+	editorTemplate -suppress "ctrlMesh";
+	editorTemplate -suppress "outMesh";
+}
+
+proc string _getNodeName(string $attrNameWithNodeName)
+{
+	string $buff1[], $buff2[];
+	tokenize $attrNameWithNodeName ":" $buff1;
+	tokenize $buff1[size($buff1)-1] "." $buff2;
+	return $buff2[0];
+}
+
+global proc AEseExprMeshNew(string $seExprAttr)
+{
+	string $nodeName = _getNodeName($seExprAttr);
+	setUITemplate -pushTemplate attributeEditorTemplate;
+	columnLayout -adj true;
+	scrollField -h 240 -ed 1 -wordWrap 0 seExprStrField;
+ 	button -l "Edit Expression" EditSeExprBtn;
+ 	button -l "Add Attribute" AddAttrSeExprBtn;
+	setParent "..";
+	setUITemplate -popTemplate;
+	AEseExprMeshReplace $seExprAttr;
+}
+
+global proc AEseExprMeshReplace(string $seExprAttr)
+{
+	string $nodeName = _getNodeName($seExprAttr);
+	string $expr = `getAttr $seExprAttr`;
+	scrollField -e -tx $expr seExprStrField;
+	button -e -c ("AEseExprMesh_editExpr(\""+$seExprAttr+"\")") EditSeExprBtn;
+	button -e -c ("AEseExprMesh_addAttr(\""+$nodeName+"\")") AddAttrSeExprBtn;
+}
+
+global proc AEseExprMesh_editExpr(string $seExprAttr)
+{
+	string $expr = `scrollField -q -tx seExprStrField`;
+	setAttr -type "string" $seExprAttr $expr;
+}
+
+global proc AEseExprMesh_addAttr(string $nodeName)
+{
+	dynAddAttrWin({$nodeName});
+}
+
+
+
