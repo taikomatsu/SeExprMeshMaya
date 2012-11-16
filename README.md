@@ -22,8 +22,8 @@ Build
 I developed this plug-in on Linux and I don't have any environment.  
 So I didn't build it on Win/Mac environment. 
 
-If you are a user of Maya2013/Linux, you can use pre-compiled binaly. 
-Please download it from [here(https://github.com/taikomatsu/SeExprMeshMaya/downloads) "Download"). 
+If you are a user of Maya2013/Linux, you can use pre-compiled binaly.  
+Please download it from [here](https://github.com/taikomatsu/SeExprMeshMaya/downloads "Download"). 
 
 #### Linux
 1. [Download the source.](https://github.com/taikomatsu/SeExprMeshMaya/downloads "Download")
