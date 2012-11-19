@@ -22,8 +22,8 @@ Build
 I developed this plug-in on Linux and I don't have any environment.  
 So I didn't build it on Win/Mac environment. 
 
-If you are a user of Maya2013/Linux, you can use pre-compiled binaly. 
-Please download it from [here(https://github.com/taikomatsu/SeExprMeshMaya/downloads) "Download"). 
+If you are a user of Maya2013/Linux, you can use pre-compiled binaly.  
+Please download it from [here](https://github.com/taikomatsu/SeExprMeshMaya/downloads "Download"). 
 
 #### Linux
 1. [Download the source.](https://github.com/taikomatsu/SeExprMeshMaya/downloads "Download")
@@ -75,33 +75,33 @@ You can select some output type.
 *color and uv is processed on current colorSet or uvSet.*
 
 #### seExprStr
-Enter your SeExpr expression here. 
-In this field, you can use extra attributes as SeExpr variable directly. 
-But it's just limited __float__ and __vector__. 
+Enter your SeExpr expression here.  
+In this field, you can use extra attributes as SeExpr variable directly.  
+But it's just limited __float__ and __vector__.  
 
 #### envelope
-Deformation influence. 
-0 is no deformation, 1 is full.
+Deformation influence.  
+0 is no deformation, 1 is full. 
 
 #### time
-You have to connect here from _time1.outTime_ if you use __time__ or __frame__ local variable. 
-This parameter drives all time value on the node.
+You have to connect here from _time1.outTime_ if you use __time__ or __frame__ local variable.  
+This parameter drives all time value on the node. 
 
 #### inMesh
-The mesh be processed.
+The mesh be processed. 
 
 #### outMesh
-Processed mesh.
+Processed mesh. 
 
 #### ctrlMesh
-Additional control mesh. 
-If you want to use __closestPoint()__ or __closestNormal()__, have to connect any mesh.
+Additional control mesh.  
+If you want to use __closestPoint()__ or __closestNormal()__, have to connect any mesh. 
 
 #### inMatrix
-If you want to move the object by its transform, and follow the deformation, you should connect matrix attribute here. 
-Furthermore, this attribute is shown in Attribute Editor. 
-Because when you unconnect it, its values may not reset right. 
-Then you have to clear the unnecessary values manually.
+If you want to move the object by its transform, and follow the deformation, you should connect matrix attribute here.  
+Furthermore, this attribute is shown in Attribute Editor.  
+Because when you unconnect it, its values may not reset right.  
+Then you have to clear the unnecessary values manually. 
 
 Local Variables
 ---------------
