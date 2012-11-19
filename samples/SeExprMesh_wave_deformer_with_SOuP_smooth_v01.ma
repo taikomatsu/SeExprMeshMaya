@@ -1,6 +1,6 @@
 //Maya ASCII 2013 scene
-//Name: seExprMesh_wave_rig_v01.ma
-//Last modified: 日, 11月 18, 2012 03:54:56 午後
+//Name: SeExprMesh_wave_deformer_with_SOuP_smooth_v01.ma
+//Last modified: 火, 11月 20, 2012 02:41:10 午前
 //Codeset: UTF-8
 requires maya "2013";
 requires "Mayatomr" "2013.0 - 3.10.1.9 ";
@@ -145,7 +145,7 @@ createNode parentConstraint -n "loc_waveForward_glb_parentConstraint1" -p "loc_w
 createNode transform -n "camera1";
 	setAttr ".v" no;
 	setAttr ".rp" -type "double3" -1.7763568394002505e-15 -8.0491169285323849e-16 1.4210854715202004e-14 ;
-	setAttr ".rpt" -type "double3" 5.0655045383049051e-15 7.4205428786501185e-15 -1.9158699808049372e-15 ;
+	setAttr ".rpt" -type "double3" 5.0655045383049043e-15 7.4205428786501185e-15 -1.9158699808049372e-15 ;
 createNode camera -n "cameraShape1" -p "camera1";
 	setAttr -k off ".v";
 	setAttr ".rnd" no;
@@ -191,7 +191,7 @@ createNode seExprMesh -n "seExprMesh1";
 	addAttr -ci true -sn "waveForwardDirZ" -ln "waveForwardDirZ" -at "double" -p "waveForwardDir";
 	addAttr -ci true -sn "waveHeight" -ln "waveHeight" -dv 1 -min 0 -max 20 -at "double";
 	addAttr -ci true -sn "exp" -ln "exp" -dv 1 -min 0 -max 10 -at "double";
-	setAttr ".sestr" -type "string" "rotAxis = norm(rotAxisTgtPos-origin);\nwaveDir = norm(waveForwardDir-origin);\n_P = P - rotAxis * dot(P-origin, rotAxis);\nd = length(_P - origin);\nnd = pow(linearstep(d / maxDistance, 1, 0), exp);\nnOrigin = origin;\nrotate(P-origin, rotAxis, nd*rotAngle)+origin";
+	setAttr ".sestr" -type "string" "rotAxis = norm(rotAxisTgtPos-origin);\n_P = P - rotAxis * dot(P-origin, rotAxis);\nd = length(_P - origin);\nnd = pow(linearstep(d / maxDistance, 1, 0), exp);\nnOrigin = origin;\nrotate(P-origin, rotAxis, nd*rotAngle)+origin";
 	setAttr -k on ".origin";
 	setAttr -k on ".originX";
 	setAttr -k on ".originY";
@@ -283,8 +283,8 @@ createNode script -n "sceneConfigurationScriptNode";
 	setAttr ".st" 6;
 createNode hyperGraphInfo -n "nodeEditorPanel1Info";
 createNode hyperView -n "hyperView1";
-	setAttr ".vl" -type "double2" 535.81181700546176 -42941.145773361532 ;
-	setAttr ".vh" -type "double2" 2005.2401932512046 -42520.298657180443 ;
+	setAttr ".vl" -type "double2" 506.61264505802336 -42944.047619047633 ;
+	setAttr ".vh" -type "double2" 2036.2444977991204 -42520.238095238114 ;
 	setAttr ".dag" no;
 createNode hyperLayout -n "hyperLayout1";
 	setAttr ".ihi" 0;
@@ -316,8 +316,12 @@ createNode hyperLayout -n "hyperLayout1";
 	setAttr ".hyp[8].x" 238.57142639160156;
 	setAttr ".hyp[8].y" -42730;
 	setAttr ".hyp[8].nvs" 1936;
-	setAttr ".hyp[9].nvs" 1936;
-	setAttr ".hyp[10].nvs" 1648;
+	setAttr ".hyp[9].x" 1274.989990234375;
+	setAttr ".hyp[9].y" -42852.859375;
+	setAttr ".hyp[9].nvs" 2864;
+	setAttr ".hyp[10].x" 1027.84716796875;
+	setAttr ".hyp[10].y" -42862.59765625;
+	setAttr ".hyp[10].nvs" 2512;
 	setAttr ".hyp[11].nvs" 1648;
 	setAttr ".hyp[12].nvs" 2032;
 	setAttr ".hyp[13].nvs" 2096;
@@ -637,7 +641,7 @@ createNode animCurveTA -n "loc_waveOrigin_rotateZ";
 createNode animCurveTL -n "camera1_translateX";
 	setAttr ".tan" 18;
 	setAttr ".wgt" no;
-	setAttr ".ktv[0]"  120 21.194224240043226;
+	setAttr ".ktv[0]"  120 21.194224240043223;
 createNode animCurveTL -n "camera1_translateY";
 	setAttr ".tan" 18;
 	setAttr ".wgt" no;
@@ -805,4 +809,4 @@ connectAttr "oceanShapeOrig.w" "groupParts2.ig";
 connectAttr "groupId2.id" "groupParts2.gi";
 connectAttr "oceanShape.iog" ":initialShadingGroup.dsm" -na;
 connectAttr "defaultRenderLayer.msg" ":defaultRenderingList1.r" -na;
-// End of seExprMesh_wave_rig_v01.ma
+// End of SeExprMesh_wave_deformer_with_SOuP_smooth_v01.ma
