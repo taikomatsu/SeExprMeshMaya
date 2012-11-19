@@ -64,6 +64,11 @@ template<class T> inline void calcFinalVal(int i, SeVec3d& val, T& in, float env
 	val[2] = in[i][2] + (val[2] - in[i][2]) * envelope;
 }
 
+inline void getVertexIndexs(MIntArray& vlist)
+{
+	for (int i=0; i<vlist.length(); ++i)
+		vlist[i] = i;
+}
 
 SeExprMeshNode::SeExprMeshNode() {}
 
@@ -283,7 +288,9 @@ MStatus SeExprMeshNode::execSeExpr(
 	const MFloatMatrix ifmat = MFloatMatrix(matElems).inverse();
 
 	MPointArray inPs, outPs;
-	MFloatVectorArray inNs, outNs;
+	//MFloatVectorArray inNs, outNs;
+	MFloatVectorArray inNs;
+	MVectorArray outNs;
 	MColorArray inCds, outCds;
 	MString colorSetName, uvSetName;
 	MFloatArray inUs, inVs, outUs, outVs;
@@ -398,11 +405,7 @@ MStatus SeExprMeshNode::execSeExpr(
 			if (envelope < 1.f) {
 				calcFinalVal<MFloatVectorArray>(i, val, inNs, envelope);
 			}
-			outNs.set(MFloatVector(
-				static_cast<float>(val[0]),
-				static_cast<float>(val[1]),
-				static_cast<float>(val[2])) * ifmat,
-				i);
+			outNs.set(MVector(val[0], val[1], val[2]) * imat, i);
 		} else if (outType == 2) { //  Color
 			if (envelope < 1.f) {
 				calcFinalVal<MColorArray>(i, val, inCds, envelope);
@@ -421,14 +424,14 @@ MStatus SeExprMeshNode::execSeExpr(
 		}
 	}
 
+	MIntArray vlist(inMeshFn.numVertices());
 	if (outType == 0) { // Position
 		outMeshFn.setPoints(outPs);
 	} else if (outType == 1) { // Normal
-		outMeshFn.setNormals(outNs, MSpace::kObject);
+		getVertexIndexs(vlist);
+		outMeshFn.setVertexNormals(outNs, vlist, MSpace::kObject);
 	} else if (outType == 2) { // Color
-		MIntArray vlist(inMeshFn.numVertices());
-		for (int i=0; i<vlist.length(); ++i)
-			vlist[i] = i;
+		getVertexIndexs(vlist);
 		outMeshFn.setVertexColors(
 			outCds,
 			vlist,
