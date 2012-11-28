@@ -86,6 +86,7 @@ MStatus SeExprMeshNode::compute(const MPlug& plug, MDataBlock& data)
 		MString exprStr = data.inputValue(aSeExpr).asString();
 		float envelope = data.inputValue(aEnvelope).asFloat();
 		MDataHandle outMesh_hdl = data.outputValue(aOutMesh);
+		dynPlugs.clear();
 
 		if (inMesh.isNull()) {
 			MString nodeName = MFnDependencyNode(thisMObject()).name();
@@ -133,7 +134,7 @@ MStatus SeExprMeshNode::compute(const MPlug& plug, MDataBlock& data)
 	return MS::kSuccess;
 }
 
-MStatus SeExprMeshNode::getDynamicAttrs(const MObject& node, MPlugArray& dynPlugs) const
+MStatus SeExprMeshNode::getDynamicAttrs(const MObject& node, MPlugArray& plugs) const
 {
 	MFnDependencyNode nodeFn(node);
 	MObject attr;
@@ -142,7 +143,7 @@ MStatus SeExprMeshNode::getDynamicAttrs(const MObject& node, MPlugArray& dynPlug
 		attr = nodeFn.attribute(i);
 		MFnAttribute attrFn(attr);
 		if (attrFn.isDynamic()) {
-			dynPlugs.append(MPlug(node, attr));
+			plugs.append(MPlug(node, attr));
 		}
 	}
 	return MS::kSuccess;
@@ -167,12 +168,10 @@ MStatus SeExprMeshNode::dynamicAttrsAsMap(
 			plugs[i].child(0).getValue(vec[0]);
 			plugs[i].child(1).getValue(vec[1]);
 			plugs[i].child(2).getValue(vec[2]);
-			name.assign(getNameFromPlug(plugs[i]));
-			dynVectorAttrs.insert(DynVectorAttrValue::value_type(name, vec));
+			dynVectorAttrs.insert(DynVectorAttrValue::value_type(getNameFromPlug(plugs[i]), vec));
 		} else {
 			v = plugs[i].asDouble();
-			name.assign(getNameFromPlug(plugs[i]));
-			dynScalarAttrs.insert(DynScalarAttrValue::value_type(name, v));
+			dynScalarAttrs.insert(DynScalarAttrValue::value_type(getNameFromPlug(plugs[i]), v));
 		}
 	}
 	return MS::kSuccess;
@@ -351,8 +350,18 @@ MStatus SeExprMeshNode::execSeExpr(
 		ClosestPointNormalFunc::define(cnFunc);
 
 	// check expression validity
+	if (!expr.syntaxOK()) {
+		MGlobal::displayError("[SeExpr] Syntax Error.");
+		return MS::kFailure;
+	}
+
 	if (!expr.isValid()) {
-		MGlobal::displayError("[SeExpr] Invalid Expression.");
+		std::vector<SeExpression::Error> errors = expr.getErrors();
+		MString err;
+		for (std::vector<SeExpression::Error>::iterator iter = errors.begin(), end = errors.end(); iter != end; ++iter) {
+			err = (&*iter)->error.c_str();
+			MGlobal::displayError("[SeExpr] Error: "+ err + ".");
+		}
 		return MS::kFailure;
 	}
 
