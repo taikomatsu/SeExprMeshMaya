@@ -159,7 +159,6 @@ MStatus SeExprMeshNode::dynamicAttrsAsMap(
 	DynScalarAttrValue& dynScalarAttrs,
 	DynVectorAttrValue& dynVectorAttrs) const
 {
-	std::string name;
 	double v = 0.0;
 	MVector vec;
 	unsigned int numPlugs = plugs.length();
