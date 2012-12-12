@@ -81,8 +81,12 @@ private:
 inline void MeshExpression::setDynamicScalarAttrs(DynScalarAttrValue &attrs)
 {
 	DynScalarAttrValue::iterator iter = attrs.begin();
+	std::pair<DynScalarAttrVar::iterator, bool> pr;
 	while(iter != attrs.end()) {
-		dynScalarAttrs.insert(DynScalarAttrVar::value_type(iter->first, SimpleScalarVar(iter->second)));
+		pr = dynScalarAttrs.insert(
+			DynScalarAttrVar::value_type(iter->first, SimpleScalarVar(iter->second)));
+		if (pr.second == false) // already exists
+			dynScalarAttrs[iter->first] = SimpleScalarVar(iter->second);
 		++iter;
 	}
 }
@@ -90,11 +94,15 @@ inline void MeshExpression::setDynamicScalarAttrs(DynScalarAttrValue &attrs)
 inline void MeshExpression::setDynamicVectorAttrs(DynVectorAttrValue &attrs)
 {
 	DynVectorAttrValue::iterator iter = attrs.begin();
+	std::pair<DynVectorAttrVar::iterator, bool> pr;
 	while(iter != attrs.end()) {
 		double x = iter->second[0];
 		double y = iter->second[1];
 		double z = iter->second[2];
-		dynVectorAttrs.insert(DynVectorAttrVar::value_type(iter->first, SimpleVectorVar(x, y, z)));
+		pr = dynVectorAttrs.insert(
+			DynVectorAttrVar::value_type(iter->first, SimpleVectorVar(x, y, z)));
+		if (pr.second == false) // already exists
+			dynVectorAttrs[iter->first] = SimpleVectorVar(x, y, z);
 		++iter;
 	}
 }
@@ -150,7 +158,6 @@ inline SeExprVarRef* MeshExpression::resolveVar(const std::string& name) const
 		DynScalarAttrVar::iterator iterS = dynScalarAttrs.find(name);
 		if (iterS != dynScalarAttrs.end())
 			return &(iterS->second);
-
 		// return vector
 		DynVectorAttrVar::iterator iterV = dynVectorAttrs.find(name);
 		return (iterV != dynVectorAttrs.end()) ? &(iterV->second) : 0;

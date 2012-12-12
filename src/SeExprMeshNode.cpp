@@ -24,6 +24,10 @@
 #include <string>
 #include <algorithm>
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 // This is a tmporary value.
 // You can change this.
 MTypeId SeExprMeshNode::id(0x97512);
@@ -377,31 +381,43 @@ MStatus SeExprMeshNode::execSeExpr(
 
 
 #ifdef _OPENMP
+int numThreads = omp_get_max_threads();
+MeshExpression *exprs = new MeshExpression[numThreads];
+// initialize SeExpr before per vtx loop
+for(int i=0; i<numThreads; ++i)
+	exprs[i].setExpr(expstr);
+
 #pragma omp parallel for
-#endif
 	for(int i=0; i<pNums; ++i) {
-		MeshExpression exprmt(expstr);
+		MeshExpression *exprmt;
+		exprmt = exprs + omp_get_thread_num();
+#else
+	// single thread //
+	MeshExpression *exprmt;
+	exprmt = &expr;
+	for(int i=0; i<pNums; ++i) {
+#endif
 		// set value to uniform variables //
-		if (exprmt.usesVar("frame"))
-			exprmt.setFrame(frame);
-		if (exprmt.usesVar("time"))
-			exprmt.setTime(second);
+		if (exprmt->usesVar("frame"))
+			exprmt->setFrame(frame);
+		if (exprmt->usesVar("time"))
+			exprmt->setTime(second);
 		if (dynScalarAttrs.size() > 0)
-			exprmt.setDynamicScalarAttrs(dynScalarAttrs);
+			exprmt->setDynamicScalarAttrs(dynScalarAttrs);
 		if (dynVectorAttrs.size() > 0)
-			exprmt.setDynamicVectorAttrs(dynVectorAttrs);
+			exprmt->setDynamicVectorAttrs(dynVectorAttrs);
 
 		// set value to varying variables //
-		exprmt.setP(inPs[i] * mat);
-		if (exprmt.usesVar("N") || outType==1)
-			exprmt.setN(MVector(inNs[i]) * mat);
-		if (exprmt.usesVar("Cd") || outType==2)
-			exprmt.setCd(inCds[i]);
-		if (exprmt.usesVar("u") || exprmt.usesVar("v") || outType==3)
-			exprmt.setUV(inUs[i], inVs[i]);
+		exprmt->setP(inPs[i] * mat);
+		if (exprmt->usesVar("N") || outType==1)
+			exprmt->setN(MVector(inNs[i]) * mat);
+		if (exprmt->usesVar("Cd") || outType==2)
+			exprmt->setCd(inCds[i]);
+		if (exprmt->usesVar("u") || exprmt->usesVar("v") || outType==3)
+			exprmt->setUV(inUs[i], inVs[i]);
 
 		// Evaluate //
-		SeVec3d val = exprmt.evaluate();
+		SeVec3d val = exprmt->evaluate();
 
 		// set calculated value
 		if (outType == 0) { // Position
@@ -431,6 +447,10 @@ MStatus SeExprMeshNode::execSeExpr(
 			outVs.set(val[1], i);
 		}
 	}
+
+#ifdef _OPENMP
+	delete [] exprs;
+#endif
 
 	MIntArray vlist(inMeshFn.numVertices());
 	if (outType == 0) { // Position

@@ -6,8 +6,7 @@
 MStatus initializePlugin(MObject obj)
 { 
 	MStatus   status;
-	MFnPlugin plugin(obj, "Tai Komatsu", "0.4", "Any");
-
+	MFnPlugin plugin(obj, "Tai Komatsu", "0.5", "Any");
 	// register node
 	status = plugin.registerNode("seExprMesh", SeExprMeshNode::id, SeExprMeshNode::creator,
 								  SeExprMeshNode::initialize);
